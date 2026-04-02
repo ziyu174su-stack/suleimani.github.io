@@ -49,6 +49,13 @@
             font-weight: 400;
         }
 
+        .header-emoji {
+            display: inline-block;
+            margin: 0 8px;
+            font-size: 0.9em;
+            vertical-align: middle;
+        }
+
         .gallery-container {
             position: relative;
             width: 100%;
@@ -69,26 +76,28 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
 
         .pet-image {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 90%;
+            max-height: 85%;
             object-fit: contain;
-            transition: transform 0.3s ease;
             cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .pet-image:hover {
-            transform: scale(1.02);
+            transform: none;
         }
 
         .pet-image.clicked {
-            animation: bounce 0.6s ease;
+            animation: none;
         }
 
         .pet-image.clicked-no-slide {
-            animation: bounce 0.6s ease;
+            animation: none;
         }
 
         .caption {
@@ -689,7 +698,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🐱 萌宠治愈馆 🐶</h1>
+            <h1><span class="header-emoji">✨</span>萌宠治愈馆<span class="header-emoji">🌸</span></h1>
             <p>让温暖的小生命治愈你的每一天</p>
         </div>
 
@@ -898,12 +907,7 @@
 
         // 图片点击事件
         petImage.addEventListener('click', (e) => {
-            // 添加点击动画（不包含闪入效果）
-            petImage.classList.add('clicked-no-slide');
-            setTimeout(() => {
-                petImage.classList.remove('clicked-no-slide');
-            }, 600);
-
+            // 不添加任何点击动画
             // 创建零食动画
             const rect = petImage.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -950,7 +954,7 @@
         let isSwipe = false;
 
         galleryContainer.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
+            touchStartX = e.touches[0].clientX;
             isSwipe = false;
         }, { passive: true });
 
@@ -959,7 +963,7 @@
         }, { passive: true });
 
         galleryContainer.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
+            touchEndX = e.changedTouches[0].clientX;
             handleSwipe();
         }, { passive: true });
 
@@ -983,9 +987,8 @@
             // 阻止水平滚动
             if (e.touches.length === 1) {
                 const touch = e.touches[0];
-                const startX = touch.clientX;
                 const currentX = touch.clientX;
-                const diff = Math.abs(startX - currentX);
+                const diff = Math.abs(touchStartX - currentX);
 
                 if (diff > 10) {
                     e.preventDefault();
